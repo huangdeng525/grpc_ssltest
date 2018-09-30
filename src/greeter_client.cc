@@ -19,6 +19,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 #include <grpcpp/grpcpp.h>
 
@@ -71,7 +74,33 @@ class GreeterClient {
   std::unique_ptr<Greeter::Stub> stub_;
 };
 
+static void read(const std::string &filename, std::string & data)
+{
+	std::ifstream file(filename.c_str(), std::ios::in);
+	if (file.is_open())
+	{
+		std::stringstream ss;
+		ss << file.rdbuf();
+		file.close();
+
+		data = ss.str();
+	}
+}
+
+void GetClientCredential(grpc::SslCredentialsOptions &sslOps)
+{
+	std::string key;
+	std::string cert;
+	std::string root;
+
+	read("key", key);
+	read("cert", cert);
+	read("root", root);
+
+}
 int main(int argc, char** argv) {
+
+
   // Instantiate the client. It requires a channel, out of which the actual RPCs
   // are created. This channel models a connection to an endpoint (in this case,
   // localhost at port 50051). We indicate that the channel isn't authenticated

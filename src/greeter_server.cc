@@ -19,6 +19,9 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 #include <grpcpp/grpcpp.h>
 
@@ -46,13 +49,47 @@ class GreeterServiceImpl final : public Greeter::Service {
   }
 };
 
+
+static void read(const std::string &filename, std::string & data)
+{
+	std::ifstream file(filename.c_str(), std::ios::in);
+	if (file.is_open())
+	{
+		std::stringstream ss;
+		ss << file.rdbuf();
+		file.close();
+
+		data = ss.str();
+	}
+}
+
+void GetServerCredential(grpc::SslServerCredentialsOptions &sslOps)
+{
+	std::string key;
+	std::string cert;
+	std::string root;
+
+	read("key", key);
+	read("cert", cert);
+	read("root", root);
+
+	grpc::SslServerCredentialsOptions::PemKeyCertPair key_cert = { key, cert };
+
+	sslOps.pem_root_certs = root;
+	sslOps.pem_key_cert_pairs.push_back(key_cert);
+}
+
 void RunServer() {
   std::string server_address("0.0.0.0:50051");
   GreeterServiceImpl service;
 
+  grpc::SslServerCredentialsOptions sslOps;
+  GetServerCredential(sslOps);
+
   ServerBuilder builder;
   // Listen on the given address without any authentication mechanism.
-  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  //builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  builder.AddListeningPort(server_address, grpc::SslServerCredentials(sslOps));
   // Register "service" as the instance through which we'll communicate with
   // clients. In this case it corresponds to an *synchronous* service.
   builder.RegisterService(&service);
