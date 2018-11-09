@@ -69,9 +69,9 @@ void GetServerCredential(grpc::SslServerCredentialsOptions &sslOps)
 	std::string cert;
 	std::string root;
 
-	read("key", key);
-	read("cert", cert);
-	read("root", root);
+	read("cert/server.key", key);
+	read("cert/server.crt", cert);
+	read("cert/ca.crt", root);
 
 	grpc::SslServerCredentialsOptions::PemKeyCertPair key_cert = { key, cert };
 

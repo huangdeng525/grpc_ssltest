@@ -93,10 +93,13 @@ void GetClientCredential(grpc::SslCredentialsOptions &sslOps)
 	std::string cert;
 	std::string root;
 
-	read("key", key);
-	read("cert", cert);
-	read("root", root);
+	read("cert/client.key", key);
+	read("cert/client.crt", cert);
+	read("cert/ca.crt", root);
 
+	sslOps.pem_cert_chain = cert;
+	sslOps.pem_private_key = key;
+	sslOps.pem_root_certs = root;
 }
 int main(int argc, char** argv) {
 
@@ -105,11 +108,24 @@ int main(int argc, char** argv) {
   // are created. This channel models a connection to an endpoint (in this case,
   // localhost at port 50051). We indicate that the channel isn't authenticated
   // (use of InsecureChannelCredentials()).
-  GreeterClient greeter(grpc::CreateChannel(
-      "localhost:50051", grpc::InsecureChannelCredentials()));
+  //GreeterClient greeter(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+  //
+	grpc::SslCredentialsOptions sslOps;
+	GetClientCredential(sslOps);
+	std::shared_ptr <grpc::ChannelCredentials> channel_creds = grpc::SslCredentials(sslOps);
+	grpc::ChannelArguments args;
+	args.SetSslTargetNameOverride("andisat");
+	GreeterClient greeter(grpc::CreateChannel("192.168.33.100:50051", channel_creds));
+	GreeterClient greeter2(grpc::CreateCustomChannel("192.168.33.100:50051", channel_creds, args));
   std::string user("world");
-  std::string reply = greeter.SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+  //std::string reply = greeter.SayHello(user);
+  //std::cout << "Greeter received: " << reply << std::endl;
+  for (int i = 0; i < 10; ++i)
+  {
+	  std::string reply2 = greeter2.SayHello(user);
+	  std::cout << "Greeter received: " << reply2 << std::endl;
+
+  }
 
   return 0;
 }

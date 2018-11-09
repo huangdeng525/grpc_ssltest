@@ -97,7 +97,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\github\grpc\.build\third_party\boringssl\crypto\Debug\;D:\github\grpc\.build\Debug\;D:\github\grpc\.build\third_party\protobuf\Debug\;D:\github\grpc\.build\third_party\boringssl\ssl\Debug\;D:\github\grpc\.build\third_party\zlib\Debug\</AdditionalLibraryDirectories>
       <AdditionalDependencies>crypto.lib;gpr.lib;grpc.lib;grpc++.lib;libprotobufd.lib;ssl.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
