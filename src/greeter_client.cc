@@ -94,8 +94,8 @@ void GetClientCredential(grpc::SslCredentialsOptions &sslOps)
 	std::string root;
 
 	read("cert/client.key", key);
-	read("cert/client.crt", cert);
-	read("cert/ca.crt", root);
+	read("cert/client.cer", cert);
+	read("cert/ca.cer", root);
 
 	sslOps.pem_cert_chain = cert;
 	sslOps.pem_private_key = key;
